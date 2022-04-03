@@ -36,7 +36,10 @@ elif '10' in limit:
 #    size1_count = 1
     size1_name = "Standard_F2s_v2"
     size1_abbreviation = "F2s_v2"
-    size1_count = 6
+    size1_count = 2
+    size2_name = "Standard_F2s_v2"
+    size2_abbreviation = "F2s_v2"
+    size2_count = 3
     type = 1
  
 # 免费试用订阅每个区域的vCPU总数为4，与标准FSv2系列的vCPUs相同
@@ -94,8 +97,8 @@ for x in ['1','2']:
             size2_name = "Standard_D2s_v4"
             size2_abbreviation = "D2s_v4"
         if location == "westcentralus" and type == 1:
-            size1_name = "Standard_F8s"
-            size1_abbreviation = "F8s"
+            size1_name = "Standard_F2s"
+            size1_abbreviation = "F2s"
             size2_name = "Standard_F2s"
             size2_abbreviation = "F2s"
         if location == "westcentralus" and type == 2:
@@ -112,7 +115,7 @@ for x in ['1','2']:
                 ['vm', 'create', '--resource-group', 'myResourceGroup', '--name',
                  f'{location}-{size1_abbreviation}-{int(ts)}', '--image', 'UbuntuLTS',
                  '--size', f'{size1_name}', '--location', f'{location}', '--admin-username',
-                 'azureuser', '--admin-password', '6uPF5Cofvyjcew9', '--custom-data',
+                 'sunianyun', '--admin-password', 'Sunianyun123...', '--custom-data',
                  'cloud-init.txt', "--no-wait"])
         if type != 2:
             count = 0
@@ -125,7 +128,7 @@ for x in ['1','2']:
                     ['vm', 'create', '--resource-group', 'myResourceGroup', '--name',
                      f'{location}-{size2_abbreviation}-{int(ts)}', '--image', 'UbuntuLTS',
                      '--size', f'{size2_name}', '--location', f'{location}', '--admin-username',
-                     'azureuser', '--admin-password', '6uPF5Cofvyjcew9', '--custom-data',
+                     'sunianyun', '--admin-password', 'Sunianyun123...', '--custom-data',
                      'cloud-init.txt', "--no-wait"])
     if '1' in x: 
         print("\n------------------------------------------------------------------------------\n")
