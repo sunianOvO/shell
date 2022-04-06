@@ -161,7 +161,7 @@ time1 = os.popen('date +"处理时间:%Y-%m-%d  %H:%M:%S "')
 time = time1.read()
 with open("./log.txt", "w") as f:
     f.write(f"{email}--{time}" + "\n\n")
-    f.write(f"  - {log}" + "\n")
+    f.write(f"{log}" + "\n")
 get_default_cli().invoke(['vm', 'list', '--query', '[].name'])
 js1 = os.popen('az vm list --query \'[].name\' -o tsv|wc -l')
 js = js1.read()
