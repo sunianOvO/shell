@@ -10,10 +10,12 @@ from azure.cli.core import get_default_cli
 # 初始化区域列表，共12个区域
 # Azure for Students和即用即付订阅均不支持 South India 和 West India 区域
 #locations = ['australiacentral', 'australiaeast', 'australiaeast', 'eastasia', 'japaneast', 'koreacentral', 'southindia', 'switzerlandnorth', 'uaenorth', 'uksouth', 'ukwest', 'westeurope']
-
+# 初始化区域列表，共31个区域
 locations = ['eastus', 'eastus2', 'westus', 'centralus', 'northcentralus', 'southcentralus','northeurope', 'westeurope', 'eastasia', 'southeastasia', 'japaneast','japanwest', 'australiaeast', 'australiasoutheast', 'australiacentral','brazilsouth', 'centralindia', 'canadacentral', 'canadaeast', 'westus2','uksouth', 'ukwest', 'koreacentral', 'koreasouth', 'francecentral','southafricanorth', 'uaenorth', 'switzerlandnorth', 'germanywestcentral','norwayeast', 'westcentralus']
-limit = os.popen('az vm list-usage --location westus --query "[?localName== \'Total Regional vCPUs\'].limit" -o tsv')
-email = os.popen('az account list --query \'[].user.name\' -o tsv')
+limit1 = os.popen('az vm list-usage --location westus --query "[?localName== \'Total Regional vCPUs\'].limit" -o tsv')
+email1 = os.popen('az account list --query \'[].user.name\' -o tsv')
+limit = limit1.read()
+email = email1.read()
 # 默认每个区域的配额都相同，因此只需查询美国东部地区的配额
 # Azure for Students订阅每个区域的vCPU总数为6，
 # 标准FSv2系列vCPUs为4，标准FS系列vCPUs为4
@@ -153,14 +155,18 @@ for i in range(60, -1, -1):
     time.sleep(1)
 print("\n------------------------------------------------------------------------------\n")
 print("以下是已创建的虚拟机列表：")
-log = os.popen('az vm list --show-details -d --query \'[].{IP:publicIps,Name:name, OS:storageProfile.osDisk.osType, admin:osProfile.adminUsername}\' -o tsv')
-time = os.popen('date +"处理时间:%Y-%m-%d  %H:%M:%S "')
+log1 = os.popen('az vm list --show-details -d --query \'[].{IP:publicIps,Name:name, OS:storageProfile.osDisk.osType, admin:osProfile.adminUsername}\' -o tsv')
+log = log1.read()
+time1 = os.popen('date +"处理时间:%Y-%m-%d  %H:%M:%S "')
+time = time1.read()
 with open("./log.txt", "w") as f:
     f.write(f"{email}--{time}" + "\n\n")
     f.write(f"  - {log}" + "\n")
 get_default_cli().invoke(['vm', 'list', '--query', '[].name'])
-js = os.popen('az vm list --query \'[].name\' -o tsv|wc -l')
-#qy = os.popen('expr %d / %d' % (js,bcs))
+js1 = os.popen('az vm list --query \'[].name\' -o tsv|wc -l')
+js = js1.read()
+#qy1 = os.popen('expr %d / %d' % (js,bcs))
+#qy = qy1.read()
 qy = f"{js} // {bcs}"
 print("\n\n-----------------------------------------------------------------------------\n\n")
 print("数据统计:\n此订阅一共开了 %d 台服务器\n在从30个地区中有 %d 个地区开机成功" % (js,qy))
