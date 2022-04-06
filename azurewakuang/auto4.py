@@ -1,4 +1,5 @@
 import io
+import os
 import json
 import time
 from contextlib import redirect_stdout
@@ -26,6 +27,7 @@ if '6' in limit:
     size2_abbreviation = "F2s"
     size2_count = 1
     type = 0
+    bcs = 2
  
 # 即用即付订阅每个区域的vCPU总数为10，与标准FSv2系列的vCPUs相同
 # 因此创建一个Standard_F8s_v2实例（占用8个vCPUs），
@@ -42,6 +44,7 @@ elif '10' in limit:
 #    size2_abbreviation = "F2s_v2"
 #    size2_count = 3
     type = 1
+    bcs = 5
  
 # 免费试用订阅每个区域的vCPU总数为4，与标准FSv2系列的vCPUs相同
 # 因此创建1个Standard_F4s_v2实例（共占用4个vCPUs）
@@ -55,6 +58,7 @@ elif '4' in limit:
     size1_abbreviation = "F4s_v2"
     size1_count = 1
     type = 2
+    bcs = 1
  
 else:
     print("未知订阅，请手动修改创建虚拟机的数量")
@@ -148,10 +152,19 @@ for i in range(60, -1, -1):
     time.sleep(1)
 print("\n------------------------------------------------------------------------------\n")
 print("以下是已创建的虚拟机列表：")
+log = os.popen('az vm list --show-details -d --query \'[].{IP:publicIps,Name:name, OS:storageProfile.osDisk.osType, admin:osProfile.adminUsername}\' -o tsv')
+time = os.popen('date +"处理时间:%Y-%m-%d  %H:%M:%S "')
+with open("./log.txt", "w") as f:
+f.write(f"{email}--{time}" + "\n\n")
+f.write(f"  - {log}" + "\n")
 get_default_cli().invoke(['vm', 'list', '--query', '[].name'])
-print("\n\n-----------------------------------------------------------------------------\n")
+js = os.popen('az vm list --query \'[].name\' -o tsv|wc -l')
+#qy = os.popen('expr %d / %d' % (js,bcs))
+qy = f"{js} // {bcs}"
+print("\n\n-----------------------------------------------------------------------------\n\n")
+print("数据统计:\n此订阅一共开了 %d 台服务器\n在从30个地区中有 %d 个地区开机成功" % (js,qy))
  
- 
+
  
 # 如果想删除脚本创建的所有资源，取消注释以下语句
 # get_default_cli().invoke(['group', 'delete', '--name', 'myResourceGroup', '--no-wait', '--yes'])
