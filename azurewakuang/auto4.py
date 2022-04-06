@@ -165,11 +165,10 @@ with open("./log.txt", "w") as f:
 get_default_cli().invoke(['vm', 'list', '--query', '[].name'])
 js1 = os.popen('az vm list --query \'[].name\' -o tsv|wc -l')
 js = js1.read()
-#qy1 = os.popen('expr %d / %d' % (js,bcs))
-#qy = qy1.read()
-qy = f"{js} // {bcs}"
+qy1 = os.popen('expr %s / %s' % (js,bcs))
+qy = qy1.read()
 print("\n\n-----------------------------------------------------------------------------\n\n")
-print("数据统计:\n此订阅一共开了 %s 台服务器\n在从30个地区中有 %s 个地区开机成功" % (js,qy))
+print("数据统计:\n此订阅服务器总数: %s \n31个地区中成功区域个数: %s " % (js,qy))
  
 
  
