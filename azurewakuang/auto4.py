@@ -7,7 +7,7 @@ from contextlib import redirect_stdout
 from azure.cli.core import get_default_cli
  
 # 1.检查配额以确定订阅类型，并确定要开的虚拟机数量
-# 初始化区域列表，共12个区域
+# 初始化区域列表，共30个区域
 # Azure for Students和即用即付订阅均不支持 South India 和 West India 区域
 #locations = ['australiacentral', 'australiaeast', 'australiaeast', 'eastasia', 'japaneast', 'koreacentral', 'southindia', 'switzerlandnorth', 'uaenorth', 'uksouth', 'ukwest', 'westeurope']
 
@@ -156,8 +156,8 @@ print("以下是已创建的虚拟机列表：")
 log = os.popen('az vm list --show-details -d --query \'[].{IP:publicIps,Name:name, OS:storageProfile.osDisk.osType, admin:osProfile.adminUsername}\' -o tsv')
 time = os.popen('date +"处理时间:%Y-%m-%d  %H:%M:%S "')
 with open("./log.txt", "w") as f:
-f.write(f"{email}--{time}" + "\n\n")
-f.write(f"  - {log}" + "\n")
+  f.write(f"{email}--{time}" + "\n\n")
+  f.write(f"  - {log}" + "\n")
 get_default_cli().invoke(['vm', 'list', '--query', '[].name'])
 js = os.popen('az vm list --query \'[].name\' -o tsv|wc -l')
 #qy = os.popen('expr %d / %d' % (js,bcs))
