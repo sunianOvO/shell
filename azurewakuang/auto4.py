@@ -24,7 +24,7 @@ email = email1.read()
 if '6' in limit:
     print("当前订阅为Azure for Students")
     size1_name = "Standard_F4s_v2"
-    size1_abbreviation = "F4s_v2"
+    size1_abbreviation = "F4s-v2"
     size1_count = 1
     size2_name = "Standard_F2s"
     size2_abbreviation = "F2s"
