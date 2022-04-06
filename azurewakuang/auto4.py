@@ -13,7 +13,7 @@ from azure.cli.core import get_default_cli
 # 初始化区域列表，共31个区域
 locations = ['eastus', 'eastus2', 'westus', 'centralus', 'northcentralus', 'southcentralus','northeurope', 'westeurope', 'eastasia', 'southeastasia', 'japaneast','japanwest', 'australiaeast', 'australiasoutheast', 'australiacentral','brazilsouth', 'centralindia', 'canadacentral', 'canadaeast', 'westus2','uksouth', 'ukwest', 'koreacentral', 'koreasouth', 'francecentral','southafricanorth', 'uaenorth', 'switzerlandnorth', 'germanywestcentral','norwayeast', 'westcentralus']
 limit1 = os.popen('az vm list-usage --location westus --query "[?localName== \'Total Regional vCPUs\'].limit" -o tsv')
-email1 = os.popen('az account list --query "[].{ZTID:isDefault,email:user.name}" -o tsv|grep True|cut -f 2| tr "\n" "_"')
+email1 = os.popen('az account list --query "[].{ZTID:isDefault,email:user.name}" -o tsv|grep True|cut -f 2| tr "\n" "-"|tr "@" "-"')
 limit = limit1.read()
 email = email1.read()
 # 默认每个区域的配额都相同，因此只需查询美国东部地区的配额
@@ -41,7 +41,7 @@ elif '10' in limit:
 #    size1_abbreviation = "F8s_v2"
 #    size1_count = 1
     size1_name = "Standard_F2s_v2"
-    size1_abbreviation = "F2s_v2"
+    size1_abbreviation = "F2s-v2"
     size1_count = 5
 #    size2_name = "Standard_F2s_v2"
 #    size2_abbreviation = "F2s_v2"
@@ -58,7 +58,7 @@ elif '4' in limit:
 #   if selection != "Y" or "y":
 #       exit(0)
     size1_name = "Standard_F4s_v2"
-    size1_abbreviation = "F4s_v2"
+    size1_abbreviation = "F4s-v2"
     size1_count = 1
     type = 2
     bcs = 1
@@ -101,9 +101,9 @@ for x in ['1','2']:
         # Azure for Students订阅不支持 F/FS 系列
         if location == "westcentralus" and type == 0:
             size1_name = "Standard_D4ds_v4"
-            size1_abbreviation = "D4ds_v4"
+            size1_abbreviation = "D4ds-v4"
             size2_name = "Standard_D2s_v4"
-            size2_abbreviation = "D2s_v4"
+            size2_abbreviation = "D2s-v4"
         if location == "westcentralus" and type == 1:
             size1_name = "Standard_F2s"
             size1_abbreviation = "F2s"
