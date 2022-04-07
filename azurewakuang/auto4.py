@@ -16,6 +16,10 @@ limit1 = os.popen('az vm list-usage --location westus --query "[?localName== \'T
 email1 = os.popen('az account list --query "[].{ZTID:isDefault,email:user.name}" -o tsv|grep True|cut -f 2| tr "\n" "-"|tr "@" "-"')
 limit = limit1.read()
 email = email1.read()
+if email == '':
+    email = input("自动获取失败! 请输入机器备注,限制 英文 数字 - . 这四个（仅一行）:  ")
+if limit == '':
+    limit = '10'
 # 默认每个区域的配额都相同，因此只需查询美国东部地区的配额
 # Azure for Students订阅每个区域的vCPU总数为6，
 # 标准FSv2系列vCPUs为4，标准FS系列vCPUs为4
@@ -155,17 +159,17 @@ for i in range(60, -1, -1):
     time.sleep(1)
 print("\n------------------------------------------------------------------------------\n")
 print("以下是已创建的虚拟机列表：")
-log1 = os.popen('az vm list --show-details -d --query \'[].{IP:publicIps,Name:name, OS:storageProfile.osDisk.osType, admin:osProfile.adminUsername}\' -o tsv')
+log1 = os.popen('az vm list --show-details -d --query \'[].{IP:publicIps,Name:name, OS:storageProfile.osDisk.osType, admin:osProfile.adminUsername,passwd:\'Sunianyun123\'}\' -o tsv')
 log = log1.read()
 time1 = os.popen('date +"处理时间:%Y-%m-%d  %H:%M:%S "')
 time = time1.read()
-with open("./log.txt", "w") as f:
+with open("./log.txt", "a+") as f:
     f.write(f"{email}--{time}" + "\n\n")
     f.write(f"{log}" + "\n")
 get_default_cli().invoke(['vm', 'list', '--query', '[].name'])
 js1 = os.popen('az vm list --query \'[].name\' -o tsv|wc -l')
 js = js1.read()
-qy1 = os.popen('expr %s / %s' % (js,bcs))
+qy1 = os.popen('expr %s/%s' % (js,bcs))
 qy = qy1.read()
 print("\n\n-----------------------------------------------------------------------------\n\n")
 print("数据统计:\n此订阅服务器总数: %s \n31个地区中成功区域个数: %s " % (js,qy))
