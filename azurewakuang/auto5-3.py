@@ -15,7 +15,7 @@ from azure.cli.core import get_default_cli
 # 初始化区域列表，共31个区域
 locations = ['eastus', 'eastus2', 'westus', 'centralus', 'northcentralus', 'southcentralus','northeurope', 'westeurope', 'eastasia', 'southeastasia', 'japaneast','japanwest', 'australiaeast', 'australiasoutheast', 'australiacentral','brazilsouth', 'centralindia', 'canadacentral', 'canadaeast', 'westus2','uksouth', 'ukwest', 'koreacentral', 'koreasouth', 'francecentral','southafricanorth', 'uaenorth', 'switzerlandnorth', 'germanywestcentral','norwayeast', 'westcentralus']
 limit1 = os.popen('az vm list-usage --location westus --query "[?localName== \'Total Regional vCPUs\'].limit" -o tsv')
-email1 = os.popen('az account list --query "[].{ZTID:isDefault,email:user.name}" -o tsv|grep True|cut -f 2| tr "\n" "-"|tr "@" "-"')
+email1 = os.popen('az account list --query "[].{ZTID:isDefault,email:user.name}" -o tsv|grep True|cut -f 2| tr "\n" "-"|tr "@" "-"|sed "s/.*#//g"')
 limit = limit1.read()
 email = email1.read()
 if email == '':
@@ -189,7 +189,7 @@ for x in ['1','2','3','4','5','6']:
         qy = (int(js) // int(bcs))
         print("\n\n-----------------------------------------------------------------------------\n\n")
         print("数据统计:\n此订阅服务器总数: %s \n31个地区中成功区域个数: %s " % (js,qy))
-        get_default_cli().invoke(['account', 'set', '--subscription', '"111"'])
+        get_default_cli().invoke(['account', 'set', '--subscription', '"222"'])
         get_default_cli().invoke(['group', 'create', '--name', 'myResourceGroup','--location', 'eastus'])
         print("创建资源组成功")
         for i in range(10, -1, -1):
