@@ -157,7 +157,7 @@ for x in ['1','2','3','4','5','6']:
         qy = (int(js) // int(bcs))
         print("\n\n-----------------------------------------------------------------------------\n\n")
         print("数据统计:\n此订阅服务器总数: %s \n31个地区中成功区域个数: %s " % (js,qy))
-        get_default_cli().invoke(['account', 'set', '--subscription', '"111"'])
+        get_default_cli().invoke(['account', 'set', '--subscription', '111'])
         get_default_cli().invoke(['group', 'create', '--name', 'myResourceGroup','--location', 'eastus'])
         print("创建资源组成功")
         for i in range(10, -1, -1):
@@ -189,7 +189,7 @@ for x in ['1','2','3','4','5','6']:
         qy = (int(js) // int(bcs))
         print("\n\n-----------------------------------------------------------------------------\n\n")
         print("数据统计:\n此订阅服务器总数: %s \n31个地区中成功区域个数: %s " % (js,qy))
-        get_default_cli().invoke(['account', 'set', '--subscription', '"222"'])
+        get_default_cli().invoke(['account', 'set', '--subscription', '222'])
         get_default_cli().invoke(['group', 'create', '--name', 'myResourceGroup','--location', 'eastus'])
         print("创建资源组成功")
         for i in range(10, -1, -1):
