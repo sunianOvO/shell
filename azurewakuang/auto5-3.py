@@ -9,11 +9,11 @@ from azure.cli.core import get_default_cli
 # 1.检查配额以确定订阅类型，并确定要开的虚拟机数量
 # 初始化区域列表，共12个区域
 # Azure for Students和即用即付订阅均不支持 South India 和 West India 区域
-#locations = ['australiacentral', 'australiaeast', 'australiaeast', 'eastasia', 'japaneast', 'koreacentral', 'southindia', 'switzerlandnorth', 'uaenorth', 'uksouth', 'ukwest', 'westeurope']
+locations = ['australiacentral', 'australiaeast', 'australiaeast', 'eastasia', 'japaneast', 'koreacentral', 'southindia', 'switzerlandnorth', 'uaenorth', 'uksouth', 'ukwest', 'westeurope']
 #测试使用
 #locations = ['australiacentral']
 # 初始化区域列表，共31个区域
-locations = ['eastus', 'eastus2', 'westus', 'centralus', 'northcentralus', 'southcentralus','northeurope', 'westeurope', 'eastasia', 'southeastasia', 'japaneast','japanwest', 'australiaeast', 'australiasoutheast', 'australiacentral','brazilsouth', 'centralindia', 'canadacentral', 'canadaeast', 'westus2','uksouth', 'ukwest', 'koreacentral', 'koreasouth', 'francecentral','southafricanorth', 'uaenorth', 'switzerlandnorth', 'germanywestcentral','norwayeast', 'westcentralus']
+#locations = ['eastus', 'eastus2', 'westus', 'centralus', 'northcentralus', 'southcentralus','northeurope', 'westeurope', 'eastasia', 'southeastasia', 'japaneast','japanwest', 'australiaeast', 'australiasoutheast', 'australiacentral','brazilsouth', 'centralindia', 'canadacentral', 'canadaeast', 'westus2','uksouth', 'ukwest', 'koreacentral', 'koreasouth', 'francecentral','southafricanorth', 'uaenorth', 'switzerlandnorth', 'germanywestcentral','norwayeast', 'westcentralus']
 limit1 = os.popen('az vm list-usage --location westus --query "[?localName== \'Total Regional vCPUs\'].limit" -o tsv')
 email1 = os.popen('az account list --query "[].{ZTID:isDefault,email:user.name}" -o tsv|grep True|cut -f 2| tr "\n" "-"|tr "@" "-"|sed "s/.*#//g"')
 limit = limit1.read()
