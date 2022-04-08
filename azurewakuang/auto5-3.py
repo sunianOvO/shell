@@ -126,7 +126,7 @@ for x in ['1','2','3','4','5','6']:
                   + f" 个 {size1_name} 实例，共 " + str(size1_count) + " 个")
             get_default_cli().invoke(
                 ['vm', 'create', '--resource-group', 'myResourceGroup', '--name',
-                 f'{email}-{location}-{size1_abbreviation}-{int(ts)}', '--image', 'UbuntuLTS',
+                 f'{email}{location}-{size1_abbreviation}-{int(ts)}', '--image', 'UbuntuLTS',
                  '--size', f'{size1_name}', '--location', f'{location}', '--admin-username',
                  'sunianyun', '--admin-password', 'Sunianyun123...', '--custom-data',
                  'cloud-init.txt', "--no-wait"])
